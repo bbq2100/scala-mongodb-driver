@@ -1,3 +1,5 @@
+package qa.scala.mongodbdriver
+
 import com.mongodb.{DB => MongoDB}
 
 import scala.collection.convert.Wrappers.JSetWrapper

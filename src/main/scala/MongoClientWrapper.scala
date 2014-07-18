@@ -1,3 +1,5 @@
+package qa.scala.mongodbdriver
+
 import com.mongodb.MongoClient
 
 class MongoClientWrapper(val host: String = "127.0.0.1", val port: Int = 27017) {
