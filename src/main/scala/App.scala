@@ -1,6 +1,8 @@
 package  qa.scala.mongodbdriver
+
+import java.util.Locale
+
 import com.mongodb.BasicDBObject
-import qa.scala.mongodbdriver._
 
 object App {
   def main(args: Array[String]) {
@@ -21,6 +23,16 @@ object App {
 
     // { "_id" : { "$oid" : "53ca2fb1c26073a4d83b132f"} , "name" : "Qaiser" , "age" : 23 , "info" : "Scala rocks! Also MongoDB"}
     println(updateableCollection findOne qaiserDocument)
+
+
+    val localeCollection: UpdateableCollection with LocalAware = db updateableCollectionWithLocaleAwareness  databaseName
+    val localeDocument: BasicDBObject = new BasicDBObject
+    localeDocument put ("name", "LOL")
+    localeDocument put ("locale", Locale.getDefault().getLanguage)
+    localeCollection += localeDocument
+
+    //{ "_id" : { "$oid" : "53ca7bdec2602f841efc99f8"} , "name" : "LOL" , "locale" : "en"}
+    println(localeCollection findOne(localeDocument))
   }
 }
 
