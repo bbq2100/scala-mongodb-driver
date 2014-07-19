@@ -8,11 +8,11 @@ class DB private(val underlyingDb: MongoDB) {
 
   private def collection(name: String) = underlyingDb getCollection name
 
-  def readOnlyCollection(name: String) = new DBCollection(collection(name))
+  def readOnlyCollection(name: String) = new DBCollection(collection(name)) with Memoizer
 
-  def administrableCollection(name: String) = new DBCollection(collection(name)) with Administrable
+  def administrableCollection(name: String) = new DBCollection(collection(name)) with Administrable with Memoizer
 
-  def updateableCollection(name: String) = new DBCollection(collection(name)) with Updateable
+  def updateableCollection(name: String) = new UpdateableCollection(collection(name))
 
   def collectionNames = for (names <- new JSetWrapper(underlyingDb.getCollectionNames)) yield names
 }

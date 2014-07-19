@@ -1,6 +1,6 @@
 package qa.scala.mongodbdriver
 
-import com.mongodb.{DBCollection => MongoDBCollection, DBObject}
+import com.mongodb.{DBCollection => MongoDBCollection, WriteResult, DBCursor, DBObject}
 
 class DBCollection(override val underlyingCollectionUtility: MongoDBCollection) extends ReadOnly
 
@@ -30,4 +30,23 @@ trait Updateable extends ReadOnly {
   def -=(document: DBObject) = underlyingCollectionUtility remove document
 
   def +=(document: DBObject) = underlyingCollectionUtility save document
+}
+
+trait Memoizer extends ReadOnly {
+  val callHistory = Map[Int, DBObject]()
+
+  override def findOne(document: DBObject) = callHistory.getOrElse(document.hashCode, super.findOne(document))
+}
+
+/**
+ * Decorating the -= method from trait Updateable -> removing documents from inner-cache in trait Memoizer in order to remain consistent.
+ * @param underlyingCollectionUtility
+ * @see Updateable.-=()
+ */
+class UpdateableCollection(override val underlyingCollectionUtility: MongoDBCollection)
+  extends DBCollection(underlyingCollectionUtility) with Updateable with Memoizer {
+  override def -=(document: DBObject) = {
+    callHistory - document.hashCode
+    super.-=(document)
+  }
 }
