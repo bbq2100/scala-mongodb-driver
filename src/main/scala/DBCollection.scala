@@ -2,7 +2,7 @@ package qa.scala.mongodbdriver
 
 import java.util.Locale
 
-import com.mongodb.{DBObject, DBCollection => MongoDBCollection}
+import com.mongodb.{DBCollection => MongoDBCollection, DBCursor, DBObject}
 
 /**
  * Default DB Collection result.
@@ -21,9 +21,24 @@ trait ReadOnly {
 
   def fullName = underlyingCollectionUtility getFullName
 
-  def find(document: DBObject) = underlyingCollectionUtility find document
+  def find(document: DBObject): DBCursor = underlyingCollectionUtility find document
 
-  def findOne(document: DBObject) = underlyingCollectionUtility findOne document
+  def findOne(document: DBObject): DBObject = underlyingCollectionUtility findOne document
+
+  /**
+   * A tail-recursive implementation which utilizes pattern matching to apply query options on the result cursor.
+   */
+  def find(queryArg: Query): DBCursor = {
+    def applyOptions(cursor: DBCursor, option: QueryOption): DBCursor = {
+      option match {
+        case Skip(skip, nextOption) => applyOptions(cursor.skip(skip), nextOption)
+        case Sort(sorting, nextOption) => applyOptions(cursor.sort(sorting), nextOption)
+        case Limit(limit, nextOption) => applyOptions(cursor.limit(limit), nextOption)
+        case NoOption => cursor
+      }
+    }
+    applyOptions(find(queryArg.query), queryArg.option)
+  }
 
   def getCount(document: DBObject) = underlyingCollectionUtility getCount document
 }
@@ -82,4 +97,31 @@ class UpdateableCollection(override val underlyingCollectionUtility: MongoDBColl
     callHistory - document.hashCode
     super.-=(document)
   }
+}
+
+/**
+ * Defines the root QueryOption.
+ */
+sealed trait QueryOption
+
+/**
+ * Indicates the end of the QueryOptionChaining.
+ * Used as default value parameter in Query.
+ */
+case object NoOption extends QueryOption
+
+case class Sort(sorting: DBObject, anotherOption: QueryOption) extends QueryOption
+
+case class Skip(number: Int, anotherOption: QueryOption) extends QueryOption
+
+case class Limit(limit: Int, anotherOption: QueryOption) extends QueryOption
+
+/**
+ * Query provides a fluent API to make arbitrary complex queries.
+ * Used patterns Compositions pattern (GoF), pattern matching
+ */
+case class Query(query: DBObject, option: QueryOption = NoOption) {
+  def sort(sorting: DBObject) = Query(query, Sort(sorting, option))
+  def skip(skip: Int) = Query(query, Skip(skip, option))
+  def limit(limit: Int) = Query(query, Limit(limit, option))
 }

@@ -4,7 +4,7 @@ import java.util.Locale
 
 import com.mongodb.BasicDBObject
 
-object App {
+object DemoBasic {
   def main(args: Array[String]) {
     val databaseName = "test"
 
@@ -33,6 +33,7 @@ object App {
 
     //{ "_id" : { "$oid" : "53ca7bdec2602f841efc99f8"} , "name" : "LOL" , "locale" : "en"}
     println(localeCollection findOne(localeDocument))
+
   }
 }
 
