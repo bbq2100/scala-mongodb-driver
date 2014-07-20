@@ -12,7 +12,7 @@ import com.mongodb.MongoClient
  * @see http://goo.gl/nI4IUY Scala in Action
  * @see https://github.com/nraychaudhuri
  */
-class MongoClientWrapper(host: String = "127.0.0.1", port: Int = 27017) {
+class MongoClientWrapper(val host: String = "127.0.0.1",val port: Int = 27017) {
   private val underlyingMongoDriver = new MongoClient(host, port)
 
   def version = underlyingMongoDriver.getVersion
