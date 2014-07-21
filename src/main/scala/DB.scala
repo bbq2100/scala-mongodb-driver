@@ -6,7 +6,7 @@ import scala.collection.convert.Wrappers.JSetWrapper
 
 /**
  * In order to use this utility wrapper -> use the companion object.
- * Maps various collections result types with the help of trait stacking.
+ * Maps various collection result types with the help of trait stacking.
  * @param underlyingDb
  */
 class DB private(val underlyingDb: MongoDB) {

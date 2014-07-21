@@ -35,5 +35,6 @@ object DemoQuery {
        */
       println(resultCursor.next)
     }
+
   }
 }

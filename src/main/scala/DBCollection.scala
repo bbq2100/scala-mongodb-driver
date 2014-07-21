@@ -110,6 +110,10 @@ sealed trait QueryOption
  */
 case object NoOption extends QueryOption
 
+/**
+ * @param sorting Used for defining sorting criteria
+ * @param anotherOption
+ */
 case class Sort(sorting: DBObject, anotherOption: QueryOption) extends QueryOption
 
 case class Skip(number: Int, anotherOption: QueryOption) extends QueryOption
