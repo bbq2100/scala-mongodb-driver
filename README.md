@@ -1,7 +1,7 @@
 scala-mongodb-driver
 ====================
 
-What´s this?
+What's this?
 -----------
 Provides a simple Scala API to be able to use [MongoDb] (http://www.mongodb.org). Developed solely for learning purposes. Example is taken from "Scala in Action by Nilanjan Raychaudhuri". Not scaled for real usage !!!
 
